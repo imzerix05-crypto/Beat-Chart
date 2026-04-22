@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beat Chart — Trap R&B Production</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a0f;
+    --panel: #0e1119;
+    --border: #1c2030;
+    --accent: #c8a96e;
+    --accent2: #7b5ea7;
+    --accent3: #3ecfb2;
+    --red: #e05a6a;
+    --text: #e8e2d9;
+    --muted: #4a5068;
+    --glow: rgba(200,169,110,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 32px 20px 60px;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 80% 10%, rgba(123,94,167,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 30% at 10% 80%, rgba(200,169,110,0.08) 0%, transparent 60%);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .tag {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: 0.8;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 8vw, 80px);
+    letter-spacing: 6px;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--accent) 0%, #fff 50%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 3px;
+  }
+
+  /* SECTION */
+  .section {
+    max-width: 900px;
+    margin: 0 auto 40px;
+  }
+
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+  }
+
+  /* GRID CHART */
+  .grid-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .grid-header {
+    display: grid;
+    grid-template-columns: 130px repeat(16, 1fr);
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    padding: 0 12px;
+  }
+
+  .grid-header-cell {
+    font-size: 9px;
+    color: var(--muted);
+    text-align: center;
+    padding: 8px 0;
+    letter-spacing: 1px;
+  }
+
+  .grid-header-cell.beat {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .grid-row {
+    display: grid;
+    grid-template-columns: 130px repeat(16, 1fr);
+    padding: 0 12px;
+    border-bottom: 1px solid rgba(28,32,48,0.5);
+    align-items: center;
+    min-height: 44px;
+    transition: background 0.2s;
+  }
+
+  .grid-row:hover {
+    background: rgba(255,255,255,0.015);
+  }
+
+  .grid-row:last-child {
+    border-bottom: none;
+  }
+
+  .row-label {
+    font-size: 10px;
+    color: var(--text);
+    opacity: 0.7;
+    letter-spacing: 0.5px;
+    padding-right: 8px;
+  }
+
+  .row-label span {
+    display: block;
+    font-size: 8px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 3px;
+  }
+
+  .dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    background: var(--border);
+    border: 1px solid rgba(255,255,255,0.04);
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .dot.on {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(200,169,110,0.5);
+  }
+
+  .dot.on-hard {
+    background: var(--red);
+    border-color: var(--red);
+    box-shadow: 0 0 12px rgba(224,90,106,0.6);
+  }
+
+  .dot.on-mid {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    box-shadow: 0 0 10px rgba(123,94,167,0.5);
+  }
+
+  .dot.on-teal {
+    background: var(--accent3);
+    border-color: var(--accent3);
+    box-shadow: 0 0 10px rgba(62,207,178,0.5);
+  }
+
+  .dot.ghost {
+    background: rgba(200,169,110,0.2);
+    border-color: rgba(200,169,110,0.3);
+  }
+
+  .dot.roll {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    box-shadow: 0 0 14px rgba(200,169,110,0.4);
+  }
+
+  /* SYNTH TABLE */
+  .synth-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .synth-head {
+    display: grid;
+    grid-template-columns: 160px 1fr 100px 120px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .synth-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 100px 120px;
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(28,32,48,0.5);
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+  }
+
+  .synth-row:hover { background: rgba(255,255,255,0.015); }
+  .synth-row:last-child { border-bottom: none; }
+
+  .synth-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .synth-name span {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .synth-desc {
+    font-size: 10px;
+    color: var(--text);
+    opacity: 0.6;
+    line-height: 1.5;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .badge-gold { background: rgba(200,169,110,0.15); color: var(--accent); border: 1px solid rgba(200,169,110,0.3); }
+  .badge-purple { background: rgba(123,94,167,0.15); color: var(--accent2); border: 1px solid rgba(123,94,167,0.3); }
+  .badge-teal { background: rgba(62,207,178,0.15); color: var(--accent3); border: 1px solid rgba(62,207,178,0.3); }
+  .badge-red { background: rgba(224,90,106,0.15); color: var(--red); border: 1px solid rgba(224,90,106,0.3); }
+
+  .fx-pill {
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    display: inline-block;
+    margin: 2px 1px;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  /* KNOB ROW */
+  .knob-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    max-width: 900px;
+    margin: 0 auto 40px;
+  }
+
+  .knob-card {
+    flex: 1;
+    min-width: 140px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .knob-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .knob-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .knob-sub {
+    font-size: 8px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  /* CHORD CHART */
+  .chord-row {
+    display: flex;
+    gap: 10px;
+    max-width: 900px;
+    margin: 0 auto 40px;
+    flex-wrap: wrap;
+  }
+
+  .chord-card {
+    flex: 1;
+    min-width: 100px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 12px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chord-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .chord-card:nth-child(1)::before { background: var(--accent); }
+  .chord-card:nth-child(2)::before { background: var(--accent2); }
+  .chord-card:nth-child(3)::before { background: var(--accent3); }
+  .chord-card:nth-child(4)::before { background: var(--red); }
+
+  .chord-num {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  .chord-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .chord-notes {
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .chord-feel {
+    font-size: 8px;
+    margin-top: 8px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  /* EXTRA ELEMENTS TABLE */
+  .extra-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .extra-head {
+    display: grid;
+    grid-template-columns: 150px 1fr 130px 110px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .extra-row {
+    display: grid;
+    grid-template-columns: 150px 1fr 130px 110px;
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(28,32,48,0.5);
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+  }
+
+  .extra-row:hover { background: rgba(255,255,255,0.015); }
+  .extra-row:last-child { border-bottom: none; }
+
+  .extra-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .extra-name span {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .extra-desc {
+    font-size: 10px;
+    color: var(--text);
+    opacity: 0.6;
+    line-height: 1.6;
+  }
+
+  .pan-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    color: var(--muted);
+  }
+
+  .pan-track {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .pan-pos {
+    position: absolute;
+    top: -3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: translateX(-50%);
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 60px;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">🎵 BandLab Production Chart</div>
+  <h1>TRAP R&B BLUEPRINT</h1>
+  <div class="subtitle">102 BPM · F# Minor · Heavy 808s · Bouncy Groove</div>
+</header>
+
+<!-- KNOB ROW -->
+<div class="knob-row">
+  <div class="knob-card">
+    <div class="knob-title">BPM</div>
+    <div class="knob-val">102</div>
+    <div class="knob-sub">Tempo</div>
+  </div>
+  <div class="knob-card">
+    <div class="knob-title">Key</div>
+    <div class="knob-val">F#m</div>
+    <div class="knob-sub">Minor Scale</div>
+  </div>
+  <div class="knob-card">
+    <div class="knob-title">Time Sig</div>
+    <div class="knob-val">4/4</div>
+    <div class="knob-sub">Standard</div>
+  </div>
+  <div class="knob-card">
+    <div class="knob-title">Swing</div>
+    <div class="knob-val">18%</div>
+    <div class="knob-sub">Groove Feel</div>
+  </div>
+  <div class="knob-card">
+    <div class="knob-title">Master Vol</div>
+    <div class="knob-val">-6dB</div>
+    <div class="knob-sub">Headroom</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 1: DRUM PATTERN -->
+<!-- ═══════════════════════════════════════ -->
+
+<div class="section">
+  <div class="section-label">01 — Drum Pattern (16-Step Sequencer)</div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> HARD HIT</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> MEDIUM HIT</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(200,169,110,0.2); border:1px solid rgba(200,169,110,0.3);border-radius:3px"></div> GHOST NOTE</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div> SNARE / CLAP</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div> HI-HAT / OPEN</div>
+    <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:3px"></div> ROLL / FILL</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--border); border:1px solid rgba(255,255,255,0.04);border-radius:3px"></div> REST</div>
+  </div>
+
+  <div class="grid-wrap">
+    <!-- Header -->
+    <div class="grid-header">
+      <div class="grid-header-cell"></div>
+      <div class="grid-header-cell beat">1</div>
+      <div class="grid-header-cell">e</div>
+      <div class="grid-header-cell">+</div>
+      <div class="grid-header-cell">a</div>
+      <div class="grid-header-cell beat">2</div>
+      <div class="grid-header-cell">e</div>
+      <div class="grid-header-cell">+</div>
+      <div class="grid-header-cell">a</div>
+      <div class="grid-header-cell beat">3</div>
+      <div class="grid-header-cell">e</div>
+      <div class="grid-header-cell">+</div>
+      <div class="grid-header-cell">a</div>
+      <div class="grid-header-cell beat">4</div>
+      <div class="grid-header-cell">e</div>
+      <div class="grid-header-cell">+</div>
+      <div class="grid-header-cell">a</div>
+    </div>
+
+    <!-- 808 KICK -->
+    <div class="grid-row">
+      <div class="row-label">808 Kick<span>Hard Sub Hit</span></div>
+      <div class="cell"><div class="dot on-hard"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot ghost"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-hard"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot ghost"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on"></div></div>
+    </div>
+
+    <!-- SNARE -->
+    <div class="grid-row">
+      <div class="row-label">Snare<span>Beat 2 & 4</span></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-mid"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot ghost"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-mid"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+    </div>
+
+    <!-- CLAP LAYER -->
+    <div class="grid-row">
+      <div class="row-label">Clap Layer<span>Slightly behind snare</span></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-mid"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-mid"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+    </div>
+
+    <!-- CLOSED HI-HAT -->
+    <div class="grid-row">
+      <div class="row-label">Closed Hi-Hat<span>8th note groove</span></div>
+      <div class="cell"><div class="dot on-teal"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-teal"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-teal"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-teal"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-teal"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-teal"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-teal"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-teal"></div></div>
+      <div class="cell"><div class="dot roll"></div></div>
+    </div>
+
+    <!-- OPEN HI-HAT -->
+    <div class="grid-row">
+      <div class="row-label">Open Hi-Hat<span>Accent points</span></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-teal"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-teal"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-teal"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-teal"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+    </div>
+
+    <!-- 808 SUB BASS -->
+    <div class="grid-row">
+      <div class="row-label">808 Sub Bass<span>Slide / Portamento ON</span></div>
+      <div class="cell"><div class="dot on-hard"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on-hard"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot"></div></div>
+      <div class="cell"><div class="dot on">
